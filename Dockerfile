@@ -2,10 +2,9 @@ FROM python:3.8-slim-buster
 
 WORKDIR /app
 
-COPY . .
+RUN pip install pipreqs
+RUN pipreqs /Ftc-Bot
 
-RUN pip freeze > requirements.txt
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+COPY . .
 
 CMD [ "python3", "Main.py"]
