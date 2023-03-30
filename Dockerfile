@@ -6,5 +6,3 @@ RUN pipreqs /
 RUN pip install -r requirements.txt
 EXPOSE 443
 CMD ["python", "Main.py"]
-CMD docker build -t my_image .
-CMD ["python", "Main.py"]
