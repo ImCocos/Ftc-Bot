@@ -10,7 +10,7 @@ WORKDIR /
 
 COPY . .
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD [ "python3", "Main.py"]
 
