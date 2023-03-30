@@ -9,5 +9,3 @@ COPY . .
 EXPOSE 5000
 
 CMD [ "python3", "Main.py"]
-
-RUN docker image push http://localhost:5000
