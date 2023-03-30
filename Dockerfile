@@ -1,4 +1,4 @@
-RUN docker build -t linuxize/redis .
+RUN docker build -t redis .
 FROM python:3.11.0
 WORKDIR Ftc-Bot/
 COPY . .
