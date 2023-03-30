@@ -24,7 +24,21 @@ def create_users_bd():
 con = sqlite3.connect('users.db')
 cur = con.cursor()
 
+@dp.message_handler()
+async def ping(message: types.Message):
+    HOST = 'localhost'
+    PORT = 80
+    BUFSIZ = 1024
+    ADDR = (HOST, PORT)
+    serversock = socket(AF_INET, SOCK_STREAM)
+    serversock.bind(ADDR)
+    serversock.listen(2)
 
+    while 1:
+        clientsock, addr = serversock.accept()
+        serversock.close()
+        exit()
+    
 # Auth and Start
 @dp.message_handler(commands = ['start'])
 async def start(message: types.Message):
