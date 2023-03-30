@@ -8,4 +8,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
-    restart: unless-stopped
+    restart_policy:
+        condition: any
