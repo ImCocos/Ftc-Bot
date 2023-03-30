@@ -8,7 +8,7 @@ COPY . .
 
 EXPOSE 8080
 
-CMD --no-healthcheck
+HEALTHCHECK --no-healthcheck
 
 CMD [ "python3", "Main.py"]
 
