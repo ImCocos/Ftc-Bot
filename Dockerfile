@@ -7,4 +7,3 @@ RUN pip install -r requirements.txt
 EXPOSE 443
 CMD ["python", "Main.py"]
 CMD docker build -t my_image .
-CMD docker run -p 443:443 my_image
