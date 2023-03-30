@@ -1,4 +1,4 @@
-docker ps
+CMD docker ps
 FROM python:3.11.0
 WORKDIR Ftc-Bot/
 COPY . .
