@@ -1,0 +1,11 @@
+
+version: '3.4'
+services:
+  web:
+    image: very-simple-web
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    restart: unless-stopped
