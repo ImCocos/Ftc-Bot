@@ -1,5 +1,5 @@
 CMD sudo docker ps
-CMD sudo docker build -t local-image-id/Any name you want:latest . 
+CMD sudo docker build -t local-image-id/Image_Name:latest . 
 FROM python:3.11.0
 WORKDIR Ftc-Bot/
 COPY . .
