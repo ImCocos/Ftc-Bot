@@ -121,7 +121,10 @@ async def help(message: types.Message):
                         f"  /start - старт бота и авторизация пользователя,\n"
                         f"  /help - список всех команд,\n"
                         f"  Баланс/Б - вывод текущего баланса,\n"
-                        f"В ближайшие дни будут добавлены Бандит и Префиксы к имени!")
+                        f"  /Бандит ставка - пример - /Бандит 3000,\n"
+                        f"  /bonus - выдаёт стартовый баланс\n"
+                        f"  при не-нулевом балансе,"
+                        f"В ближайшие дни будут добавлены Префиксы к имени!")
 
 # Check user existance function(should be called in most of funcs)
 def check_user_existance(message: types.Message):
@@ -161,7 +164,7 @@ async def bandit(message: types.Message):
     try:
         if len(input_message.split('/бандит ')) == 2 and '-' not in message.text:
             input_message = input_message.replace('/бандит ', '')
-            print(input_message)
+
 
             bandit_command = {
                 'Value':int(input_message),
@@ -206,7 +209,7 @@ async def bandit(message: types.Message):
                                                 text=f'{user_name} выиграл {bandit_command["Value"] * 10} FTC!')
                 elif r1 == r2 or r2 == r3 or r1 == r3:
                     cur.execute(
-                        f'UPDATE users SET balance = "{user_balance + (bandit_command["Value"] * 10)}" WHERE id = "{user_unique_id}"')
+                        f'UPDATE users SET balance = "{user_balance + (bandit_command["Value"] * 2)}" WHERE id = "{user_unique_id}"')
                     con.commit()
 
                     time.sleep(0.8)
@@ -235,6 +238,26 @@ async def bandit(message: types.Message):
                             f'/Бандит кол-во FTC')
 
 
+@dp.message_handler(commands=['bonus'])
+async def bonus(message: types.Message):
+    check_user_existance(message)
+
+    # SQLite3 connection
+    con = sqlite3.connect('users.db')
+    cur = con.cursor()
+
+    user_name = message.from_user.first_name
+    user_unique_id = message.from_user.id
+    user_balance = cur.execute(f'SELECT balance FROM users WHERE id = "{user_unique_id}"').fetchone()[0]
+
+    if user_balance == 0:
+        cur.execute(
+            f'UPDATE users SET balance = "{start_balance}" WHERE id = "{user_unique_id}"')
+        con.commit()
+        user_balance = cur.execute(f'SELECT balance FROM users WHERE id = "{user_unique_id}"').fetchone()[0]
+        await message.reply(f'Баланс: {user_balance}')
+    else:
+        await message.reply(f'Ты не можешь получить бонус\nпри не-нулевом балансе!')
 
 
 def main():
