@@ -1,7 +1,7 @@
 import os
 import random
 import pip
-pip.main(['install', 'pytelegrambotapi'])
+pip.main(['install', 'aiogram'])
 import sqlite3
 import aiogram
 from aiogram import Bot, Dispatcher, executor, types
@@ -12,8 +12,7 @@ from AliveKeeper import keep_alive
 
 start_balance = data['START_BALANCE']
 ImCocosKingId = data['CREATOR_ID']
-API_TOKEN = data['API_TOKEN']
-c = 0
+API_TOKEN = os.environ['API_TOKEN']
 # Initializing bot
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
@@ -28,21 +27,6 @@ def create_users_bd():
 # SQLite3 connection
 con = sqlite3.connect('users.db')
 cur = con.cursor()
-
-@dp.message_handler()
-async def ping(message: types.Message):
-    HOST = 'localhost'
-    PORT = 80
-    BUFSIZ = 1024
-    ADDR = (HOST, PORT)
-    serversock = socket(AF_INET, SOCK_STREAM)
-    serversock.bind(ADDR)
-    serversock.listen(2)
-
-    while 1:
-        clientsock, addr = serversock.accept()
-        serversock.close()
-        exit()
     
 # Auth and Start
 @dp.message_handler(commands = ['start'])
@@ -117,7 +101,7 @@ async def transfer(message: types.Message):
                 cur.execute(f'UPDATE users SET balance = "{sender_balance - transaction_value}" WHERE id = "{sender_unique_id}"')
                 cur.execute(f'UPDATE users SET balance = "{getter_balance + transaction_value}" WHERE id = "{getter_unique_id}"')
                 con.commit()
-                await bot.send_message(message.chat.id, f'{sender_name} перевел {transaction_value} {getter_name}.')
+                await bot.send_message(message.chat.id, f'{sender_name} перевел {transaction_value} FTC --> {getter_name}.')
             else:
                 await bot.send_message(message.chat.id, "Недостаточно FTC для перевода.")
         else:
@@ -169,7 +153,7 @@ def check_user_existance(message: types.Message):
 def main():
     create_users_bd()
     keep_alive()
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dp, skip_updates=True, reset_webhook=True)
 
 if __name__ == '__main__':
     main()
