@@ -1,9 +1,14 @@
+import os
 import random
+import pip
+pip.main(['install', 'pytelegrambotapi'])
 import sqlite3
 import aiogram
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from Data import data
+from AliveKeeper import keep_alive
+
 
 start_balance = data['START_BALANCE']
 ImCocosKingId = data['CREATOR_ID']
@@ -149,6 +154,7 @@ def check_user_existance(message: types.Message):
 
 def main():
     create_users_bd()
+    keep_alive()
     executor.start_polling(dp, skip_updates=True)
 
 if __name__ == '__main__':
