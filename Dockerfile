@@ -1,6 +1,9 @@
-FROM python:3.9
+FROM python:3.8
 RUN pip install aiogram
-WORKDIR /
+WORKDIR /Ftc-Bot
 COPY . .
-EXPOSE 80/tcp
-CMD [ "python3", "Main.py"]
+RUN pip install --user aiogram
+CMD ["python", "Main.py"]
+
+CMD docker build -t my_app
+CMD docker run -d my_app
