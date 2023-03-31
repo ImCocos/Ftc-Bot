@@ -1,5 +1,7 @@
 import os
 import random
+import time
+
 import pip
 pip.main(['install', 'aiogram'])
 import sqlite3
@@ -148,6 +150,91 @@ def check_user_existance(message: types.Message):
         user_balance = start_balance
         cur.execute(f'INSERT INTO users VALUES("{user_unique_id}", "{user_name}", "{user_have_premium}", "{user_balance}")')
         con.commit()
+
+
+@dp.message_handler(commands=['Бандит', 'бандит'])
+async def bandit(message: types.Message):
+
+    input_message = message.text.lower()
+    check_user_existance(message)
+
+    try:
+        if len(input_message.split('/бандит ')) == 2 and '-' not in message.text:
+            input_message = input_message.replace('/бандит ', '')
+            print(input_message)
+
+            bandit_command = {
+                'Value':int(input_message),
+            }
+
+            # SQLite3 connection
+            con = sqlite3.connect('users.db')
+            cur = con.cursor()
+
+            user_name = message.from_user.first_name
+            user_unique_id = message.from_user.id
+            user_balance = cur.execute(f'SELECT balance FROM users WHERE id = "{user_unique_id}"').fetchone()[0]
+
+            if bandit_command['Value'] <= user_balance:
+
+                bot_msg = await bot.send_message(message.chat.id, f'Bandit:\n'
+                                                        f'X|X|X')
+
+                time.sleep(0.4)
+                r1 = random.randint(0, 9)
+                await bot.edit_message_text(chat_id=bot_msg['chat']['id'], message_id=bot_msg['message_id'], text=f'Bandit:\n'
+                                                        f'{r1}|X|X')
+                time.sleep(0.4)
+                r2 = random.randint(0, 9)
+                await bot.edit_message_text(chat_id=bot_msg['chat']['id'], message_id=bot_msg['message_id'], text=f'Bandit:\n'
+                                                        f'{r1}|{r2}|X')
+                time.sleep(0.4)
+                r3 = random.randint(0, 9)
+                await bot.edit_message_text(chat_id=bot_msg['chat']['id'], message_id=bot_msg['message_id'], text=f'Bandit:\n'
+                                                        f'{r1}|{r2}|{r3}')
+
+                time.sleep(1.5)
+
+                if r1 == r2 == r3:
+                    cur.execute(
+                        f'UPDATE users SET balance = "{user_balance + (bandit_command["Value"] * 10)}" WHERE id = "{user_unique_id}"')
+                    con.commit()
+
+                    time.sleep(0.8)
+                    await bot.edit_message_text(chat_id=bot_msg['chat']['id'],
+                                                message_id=bot_msg['message_id'],
+                                                text=f'{user_name} выиграл {bandit_command["Value"] * 10} FTC!')
+                elif r1 == r2 or r2 == r3 or r1 == r3:
+                    cur.execute(
+                        f'UPDATE users SET balance = "{user_balance + (bandit_command["Value"] * 10)}" WHERE id = "{user_unique_id}"')
+                    con.commit()
+
+                    time.sleep(0.8)
+                    await bot.edit_message_text(chat_id=bot_msg['chat']['id'],
+                                                message_id=bot_msg['message_id'],
+                                                text=f'{user_name} выиграл {bandit_command["Value"] * 2} FTC!')
+                else:
+                    cur.execute(
+                        f'UPDATE users SET balance = "{user_balance - bandit_command["Value"]}" WHERE id = "{user_unique_id}"')
+                    con.commit()
+
+                    time.sleep(0.8)
+                    await bot.edit_message_text(chat_id=bot_msg['chat']['id'],
+                                                message_id=bot_msg['message_id'],
+                                                text=f'{user_name} проиграл {bandit_command["Value"]} FTC!')
+
+
+
+            else:
+                await message.reply(f'Не достаточно FTC.')
+
+
+    except Exception:
+        await message.reply(f'Данная команда не существует,\n'
+                            f'попробуй написать:\n'
+                            f'/Бандит кол-во FTC')
+
+
 
 
 def main():
